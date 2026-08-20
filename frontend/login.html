@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log In - To-Do App</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="auth-wrapper">
+    <div class="auth-card">
+      <h1>Welcome back</h1>
+      <p class="subtitle">Log in to see your tasks</p>
+
+      <form id="login-form">
+        <label for="username">Username or email</label>
+        <input type="text" id="username" required placeholder="jdoe">
+
+        <label for="password">Password</label>
+        <input type="password" id="password" required placeholder="Your password">
+
+        <button type="submit" class="btn-primary">Log In</button>
+        <div class="error-box" id="error-box"></div>
+      </form>
+
+      <p class="switch-link">Don't have an account? <a href="register.html">Sign up</a></p>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    const form = document.getElementById("login-form");
+    const errorBox = document.getElementById("error-box");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorBox.style.display = "none";
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      try {
+        await api.login(username, password);
+        window.location.href = "index.html";
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.style.display = "block";
+      }
+    });
+
+    api.me().then((res) => { if (res.authenticated) window.location.href = "index.html"; });
+  </script>
+</body>
+</html>

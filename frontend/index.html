@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Tasks - To-Do App</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="topbar">
+    <h1>📝 My Tasks</h1>
+    <div class="user-info">
+      <span id="welcome-text"></span>
+      <button class="btn-logout" id="logout-btn">Log out</button>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Add task -->
+    <div class="new-task-card">
+      <h2>Add a new task</h2>
+      <form id="task-form">
+        <label for="title">Title</label>
+        <input type="text" id="title" required placeholder="e.g. Finish project report">
+
+        <label for="description">Description (optional)</label>
+        <textarea id="description" rows="2" placeholder="Any details..."></textarea>
+
+        <div class="form-row">
+          <div>
+            <label for="priority">Priority</label>
+            <select id="priority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <div>
+            <label for="due_date">Due date (optional)</label>
+            <input type="date" id="due_date">
+          </div>
+        </div>
+
+        <button type="submit" class="btn-primary">Add Task</button>
+        <div class="error-box" id="form-error"></div>
+      </form>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <select id="filter-status">
+        <option value="">All tasks</option>
+        <option value="false">Active</option>
+        <option value="true">Completed</option>
+      </select>
+      <select id="filter-priority">
+        <option value="">Any priority</option>
+        <option value="high">High</option>
+        <option value="medium">Medium</option>
+        <option value="low">Low</option>
+      </select>
+      <select id="sort-by">
+        <option value="created_at">Sort: Newest</option>
+        <option value="due_date">Sort: Due date</option>
+        <option value="priority">Sort: Priority</option>
+      </select>
+    </div>
+
+    <!-- Task list -->
+    <ul class="task-list" id="task-list"></ul>
+    <div class="empty-state" id="empty-state" style="display:none;">No tasks yet. Add one above! 🎉</div>
+  </div>
+
+  <!-- Edit modal -->
+  <div class="modal-overlay" id="modal-overlay">
+    <div class="modal-card">
+      <h2>Edit Task</h2>
+      <form id="edit-form">
+        <input type="hidden" id="edit-id">
+
+        <label for="edit-title">Title</label>
+        <input type="text" id="edit-title" required>
+
+        <label for="edit-description">Description</label>
+        <textarea id="edit-description" rows="2"></textarea>
+
+        <div class="form-row">
+          <div>
+            <label for="edit-priority">Priority</label>
+            <select id="edit-priority">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <div>
+            <label for="edit-due_date">Due date</label>
+            <input type="date" id="edit-due_date">
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" id="cancel-edit">Cancel</button>
+          <button type="submit" class="btn-save">Save changes</button>
+        </div>
+        <div class="error-box" id="edit-error"></div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
