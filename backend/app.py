@@ -36,11 +36,9 @@ app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
 
 # Session cookie settings (relaxed for local http dev)
 app.config.update(
-   app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="None",
     SESSION_COOKIE_SECURE=True,
-)
 )
 
 # CORS only matters if you serve the frontend from a different origin
