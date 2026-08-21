@@ -45,7 +45,11 @@ app.config.update(
 # (e.g. a separate dev server on another port). Since this app also
 # serves the frontend directly, supports_credentials keeps cookies
 # working either way.
-CORS(app, supports_credentials=True)
+CORS(
+    app,
+    origins=["https://animated-stardust-9e12d3.netlify.app"],
+    supports_credentials=True
+)
 
 EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 VALID_PRIORITIES = {"low", "medium", "high"}
