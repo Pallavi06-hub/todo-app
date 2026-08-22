@@ -32,7 +32,7 @@ load_dotenv()
 # App setup
 # ------------------------------------------------------------------
 app = Flask(__name__, static_folder="../frontend", static_url_path="")
-app.secret_key = os.getenv("SECRET_KEY", "dev-secret-key-change-me")
+app.secret_key = os.environ["SECRET_KEY"]
 
 # Session cookie settings (relaxed for local http dev)
 app.config.update(
@@ -399,4 +399,4 @@ def serve_index():
 
 
 if __name__ == "__main__":
-    app.run(debug=os.getenv("FLASK_DEBUG", "1") == "1", port=5000)
+    app.run(debug=os.getenv("FLASK_DEBUG", "0") == "1", port=5000)
