@@ -5,7 +5,7 @@
  * session cookie get sent/stored on every request.
  */
 
-const API_BASE = "https://todo-app-backend-6u54.onrender.com/api";
+const API_BASE = "/api";
 
 async function apiRequest(path, options = {}) {
   const res = await fetch(API_BASE + path, {
