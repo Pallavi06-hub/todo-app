@@ -51,7 +51,7 @@ CORS(
     supports_credentials=True
 )
 
-EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+EMAIL_RE = re.compile(r"^[a-zA-Z0-9._%+-]+@gmail\.com$")
 VALID_PRIORITIES = {"low", "medium", "high"}
 
 
@@ -107,10 +107,14 @@ def register():
 
     if not username or len(username) < 3:
         return jsonify({"error": "Username must be at least 3 characters"}), 400
+    
     if not EMAIL_RE.match(email):
         return jsonify({"error": "Please enter a valid email address"}), 400
-    if len(password) < 6:
-        return jsonify({"error": "Password must be at least 6 characters"}), 400
+    
+    if not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$", password):
+        return jsonify({
+            "error": "Password must be at least 8 characters and contain uppercase, lowercase, number, and special character."
+        }), 400
 
     password_hash = generate_password_hash(password)
 

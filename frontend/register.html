@@ -17,10 +17,10 @@
         <input type="text" id="username" required minlength="3" placeholder="jdoe">
 
         <label for="email">Email</label>
-        <input type="email" id="email" required placeholder="you@example.com">
+        <input type="email" id="email" required pattern="[a-zA-Z0-9._%+-]+@gmail\.com" placeholder="you@gmail.com">
 
         <label for="password">Password</label>
-        <input type="password" id="password" required minlength="6" placeholder="At least 6 characters">
+        <input type="password" id="password" required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}" placeholder="8+ chars, Aa1@">
 
         <button type="submit" class="btn-primary">Sign Up</button>
         <div class="error-box" id="error-box"></div>
@@ -36,21 +36,37 @@
     const errorBox = document.getElementById("error-box");
 
     form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      errorBox.style.display = "none";
+  e.preventDefault();
+  errorBox.style.display = "none";
 
-      const username = document.getElementById("username").value.trim();
-      const email = document.getElementById("email").value.trim();
-      const password = document.getElementById("password").value;
+  const username = document.getElementById("username").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-      try {
-        await api.register(username, email, password);
-        window.location.href = "index.html";
-      } catch (err) {
-        errorBox.textContent = err.message;
-        errorBox.style.display = "block";
-      }
-    });
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+  const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$/;
+
+  if (!emailPattern.test(email)) {
+    errorBox.textContent = "Email must end with @gmail.com";
+    errorBox.style.display = "block";
+    return;
+  }
+
+  if (!passwordPattern.test(password)) {
+    errorBox.textContent =
+      "Password must be at least 8 characters and contain uppercase, lowercase, number, and special character.";
+    errorBox.style.display = "block";
+    return;
+  }
+
+  try {
+    await api.register(username, email, password);
+    window.location.href = "index.html";
+  } catch (err) {
+    errorBox.textContent = err.message;
+    errorBox.style.display = "block";
+  }
+});
 
     // If already logged in, skip straight to the dashboard
     api.me().then((res) => { if (res.authenticated) window.location.href = "index.html"; });
