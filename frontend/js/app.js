@@ -13,6 +13,10 @@ const filterPriority = document.getElementById("filter-priority");
 const sortBy = document.getElementById("sort-by");
 const searchInput = document.getElementById("search-input");
 
+const totalCount = document.getElementById("total-count");
+const completedCount = document.getElementById("completed-count");
+const pendingCount = document.getElementById("pending-count");
+
 // ---- Guard: must be logged in to see this page ----
 api.me().then((res) => {
   if (!res.authenticated) {
@@ -36,6 +40,10 @@ async function loadTasks() {
   if (sortBy.value) filters.sort = sortBy.value;
 
   const tasks = await api.getTasks(filters);
+
+  totalCount.textContent = tasks.length;
+  completedCount.textContent = tasks.filter(task => task.completed).length;
+  pendingCount.textContent = tasks.filter(task => !task.completed).length;
 
   const searchText = searchInput.value.trim().toLowerCase();
 
