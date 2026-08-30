@@ -815,7 +815,7 @@ button {
 }
 
 /* =========================================
-   TODAY'S SMART FOCUS
+   TODAY'S SMART FOCUS - BLUE THEME
    ========================================= */
 
 .smart-focus-card {
@@ -824,30 +824,35 @@ button {
   gap: 22px;
 
   margin: 25px 0;
-  padding: 24px 28px;
+  padding: 22px 26px;
 
-  background: #f4e1e5;
-  border: 1px solid #e5cdd3;
-  border-radius: 20px;
+  /* Blue section background */
+  background: #e5efff;
+
+  border: 1px solid #c5d9f5;
+  border-radius: 18px;
 
   box-shadow:
-    0 8px 18px rgba(100, 65, 75, 0.12),
+    0 7px 16px rgba(55, 90, 130, 0.16),
     inset 0 1px 2px rgba(255, 255, 255, 0.8);
 
   transition: all 0.3s ease;
 }
 
 .smart-focus-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
 
   box-shadow:
-    0 14px 28px rgba(100, 65, 75, 0.18),
+    0 12px 24px rgba(55, 90, 130, 0.22),
     inset 0 1px 2px rgba(255, 255, 255, 0.9);
 }
 
+
+/* Target icon */
+
 .smart-focus-icon {
-  width: 62px;
-  height: 62px;
+  width: 58px;
+  height: 58px;
 
   display: flex;
   align-items: center;
@@ -855,15 +860,24 @@ button {
 
   flex-shrink: 0;
 
-  background: #ead1d8;
-  border: 1px solid #dcc0c8;
-  border-radius: 18px;
+  background: #d4e5ff;
+  border: 1px solid #b8d0f2;
+  border-radius: 16px;
 
-  font-size: 30px;
+  font-size: 28px;
 
   box-shadow:
-    0 6px 12px rgba(100, 65, 75, 0.14);
+    0 5px 10px rgba(55, 90, 130, 0.16);
+
+  transition: all 0.25s ease;
 }
+
+.smart-focus-card:hover .smart-focus-icon {
+  transform: translateY(-2px) scale(1.03);
+}
+
+
+/* Content */
 
 .smart-focus-content {
   flex: 1;
@@ -871,19 +885,30 @@ button {
 
 .smart-focus-content h2 {
   margin: 0 0 4px;
+
   font-size: 21px;
+  color: #263b59;
 }
 
 .smart-focus-subtitle {
   margin: 0 0 14px;
+
   font-size: 14px;
-  opacity: 0.7;
+  color: #60758f;
 }
+
+
+/* Recommended task */
 
 #smart-task-title {
   margin: 0 0 12px;
+
   font-size: 19px;
+  color: #263b59;
 }
+
+
+/* Priority / Category / Due date */
 
 .smart-task-details {
   display: flex;
@@ -897,31 +922,47 @@ button {
 
   padding: 6px 11px;
 
-  background: #f9eef0;
-  border: 1px solid #e4d2d7;
+  background: #f4f8ff;
+  color: #405875;
+
+  border: 1px solid #cbdcf3;
   border-radius: 10px;
 
   font-size: 13px;
   font-weight: 600;
 
-  box-shadow: 0 3px 7px rgba(80, 50, 60, 0.08);
+  box-shadow:
+    0 3px 7px rgba(55, 90, 130, 0.10);
+
+  transition: all 0.25s ease;
 }
 
+.smart-task-details span:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 11px rgba(55, 90, 130, 0.16);
+}
+
+
+/* Start This Task button */
+
 .focus-btn {
-  margin-top: 16px;
+  margin-top: 15px;
 
   padding: 10px 18px;
 
-  border: none;
-  border-radius: 12px;
+  border: 1px solid #9ebde6;
+  border-radius: 11px;
 
-  background: #dfbcc6;
-  color: #553d45;
+  background: #c9dcf7;
+  color: #263b59;
 
   font-weight: 600;
   cursor: pointer;
 
-  box-shadow: 0 5px 10px rgba(80, 50, 60, 0.14);
+  box-shadow:
+    0 5px 10px rgba(55, 90, 130, 0.15);
 
   transition: all 0.25s ease;
 }
@@ -929,7 +970,10 @@ button {
 .focus-btn:hover {
   transform: translateY(-3px);
 
-  box-shadow: 0 8px 15px rgba(80, 50, 60, 0.2);
+  background: #b9d2f2;
+
+  box-shadow:
+    0 8px 15px rgba(55, 90, 130, 0.22);
 }
 
 .focus-btn:active {
