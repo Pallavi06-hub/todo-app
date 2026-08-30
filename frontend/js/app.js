@@ -41,6 +41,8 @@ async function loadTasks() {
 
   const tasks = await api.getTasks(filters);
 
+  updateProductivityStreak(tasks);
+
   totalCount.textContent = tasks.length;
   completedCount.textContent = tasks.filter(task => task.completed).length;
   pendingCount.textContent = tasks.filter(task => !task.completed).length;
@@ -283,3 +285,171 @@ editForm.addEventListener("submit", async (e) => {
     editError.style.display = "block";
   }
 });
+
+/* =========================================
+   PRODUCTIVITY STREAK
+   ========================================= */
+
+function updateProductivityStreak(tasks) {
+
+  const currentStreakElement =
+    document.getElementById("current-streak");
+
+  const bestStreakElement =
+    document.getElementById("best-streak");
+
+  const messageElement =
+    document.getElementById("streak-message");
+
+  const weekDaysElement =
+    document.getElementById("week-days");
+
+  if (!currentStreakElement || !bestStreakElement || !weekDaysElement) {
+    return;
+  }
+
+  // Get dates on which at least one task was completed
+  const completedDates = new Set();
+
+  tasks.forEach(task => {
+
+    if (task.completed) {
+
+      const date =
+        new Date(task.updated_at || task.created_at)
+          .toISOString()
+          .split("T")[0];
+
+      completedDates.add(date);
+    }
+
+  });
+
+  // Today's date
+  const today = new Date();
+
+  today.setHours(0, 0, 0, 0);
+
+  // Calculate current streak
+  let currentStreak = 0;
+
+  for (let i = 0; i < 365; i++) {
+
+    const date = new Date(today);
+
+    date.setDate(today.getDate() - i);
+
+    const dateString =
+      date.toISOString().split("T")[0];
+
+    if (completedDates.has(dateString)) {
+
+      currentStreak++;
+
+    } else {
+
+      break;
+
+    }
+  }
+
+  currentStreakElement.textContent = currentStreak;
+
+  // Message
+  if (currentStreak === 0) {
+
+    messageElement.textContent =
+      "Start your productivity journey! 🎯";
+
+  } else if (currentStreak < 3) {
+
+    messageElement.textContent =
+      "Great start! Keep going! 💪";
+
+  } else if (currentStreak < 7) {
+
+    messageElement.textContent =
+      "You're building a strong habit! 🔥";
+
+  } else {
+
+    messageElement.textContent =
+      "Amazing consistency! Keep it going! 🏆";
+
+  }
+
+  // Calculate best streak
+  const sortedDates =
+    Array.from(completedDates).sort();
+
+  let bestStreak = 0;
+  let streak = 0;
+  let previousDate = null;
+
+  sortedDates.forEach(dateString => {
+
+    const currentDate =
+      new Date(dateString);
+
+    if (previousDate) {
+
+      const difference =
+        (currentDate - previousDate) /
+        (1000 * 60 * 60 * 24);
+
+      if (difference === 1) {
+
+        streak++;
+
+      } else {
+
+        streak = 1;
+
+      }
+
+    } else {
+
+      streak = 1;
+
+    }
+
+    bestStreak =
+      Math.max(bestStreak, streak);
+
+    previousDate = currentDate;
+  });
+
+  bestStreakElement.textContent =
+    `${bestStreak} Days`;
+
+  // Create weekly display
+  weekDaysElement.innerHTML = "";
+
+  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+  for (let i = 6; i >= 0; i--) {
+
+    const date = new Date(today);
+
+    date.setDate(today.getDate() - i);
+
+    const dateString =
+      date.toISOString().split("T")[0];
+
+    const completed =
+      completedDates.has(dateString);
+
+    const dayBox =
+      document.createElement("div");
+
+    dayBox.className =
+      completed ? "week-day completed" : "week-day";
+
+    dayBox.innerHTML = `
+      <span>${dayNames[date.getDay()]}</span>
+      <strong>${completed ? "✓" : "○"}</strong>
+    `;
+
+    weekDaysElement.appendChild(dayBox);
+  }
+}

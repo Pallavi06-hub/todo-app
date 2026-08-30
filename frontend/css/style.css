@@ -979,3 +979,193 @@ button {
 .focus-btn:active {
   transform: translateY(0);
 }
+
+/* =========================================
+   PRODUCTIVITY STREAK
+   ========================================= */
+
+.streak-card {
+  margin: 25px 0;
+  padding: 24px 28px;
+
+  background: #e5efff;
+
+  border: 1px solid #c5d9f5;
+  border-radius: 18px;
+
+  box-shadow:
+    0 7px 16px rgba(55, 90, 130, 0.16),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8);
+
+  transition: all 0.3s ease;
+}
+
+.streak-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 12px 24px rgba(55, 90, 130, 0.22),
+    inset 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+
+/* Header */
+
+.streak-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.streak-icon {
+  width: 55px;
+  height: 55px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #d4e5ff;
+
+  border: 1px solid #b8d0f2;
+  border-radius: 15px;
+
+  font-size: 27px;
+
+  box-shadow:
+    0 5px 10px rgba(55, 90, 130, 0.16);
+
+  transition: 0.25s ease;
+}
+
+.streak-card:hover .streak-icon {
+  transform: translateY(-2px) scale(1.04);
+}
+
+.streak-header h2 {
+  margin: 0 0 4px;
+
+  color: #263b59;
+  font-size: 21px;
+}
+
+.streak-header p {
+  margin: 0;
+
+  color: #60758f;
+  font-size: 14px;
+}
+
+
+/* Current streak */
+
+.streak-number {
+  margin-top: 20px;
+
+  text-align: center;
+
+  color: #263b59;
+}
+
+.streak-number span {
+  font-size: 36px;
+  font-weight: 700;
+}
+
+.streak-number small {
+  margin-left: 6px;
+
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.streak-message {
+  margin-top: 4px;
+
+  text-align: center;
+
+  color: #60758f;
+  font-size: 14px;
+}
+
+
+/* Week */
+
+.week-days {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+.week-day {
+  width: 55px;
+  padding: 9px 5px;
+
+  text-align: center;
+
+  background: #f4f8ff;
+
+  border: 1px solid #cbdcf3;
+  border-radius: 12px;
+
+  box-shadow:
+    0 3px 7px rgba(55, 90, 130, 0.10);
+
+  transition: all 0.25s ease;
+}
+
+.week-day:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 7px 12px rgba(55, 90, 130, 0.18);
+}
+
+.week-day span {
+  display: block;
+
+  color: #60758f;
+
+  font-size: 12px;
+}
+
+.week-day strong {
+  display: block;
+
+  margin-top: 5px;
+
+  font-size: 20px;
+
+  color: #8fa8c4;
+}
+
+.week-day.completed strong {
+  color: #527da9;
+}
+
+
+/* Best streak */
+
+.best-streak {
+  margin-top: 18px;
+
+  padding: 10px;
+
+  text-align: center;
+
+  background: #d4e5ff;
+
+  border: 1px solid #b8d0f2;
+  border-radius: 11px;
+
+  color: #405875;
+
+  box-shadow:
+    0 3px 7px rgba(55, 90, 130, 0.10);
+}
+
+.best-streak strong {
+  color: #263b59;
+}
