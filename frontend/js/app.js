@@ -11,6 +11,7 @@ const welcomeText = document.getElementById("welcome-text");
 const filterStatus = document.getElementById("filter-status");
 const filterPriority = document.getElementById("filter-priority");
 const sortBy = document.getElementById("sort-by");
+const searchInput = document.getElementById("search-input");
 
 // ---- Guard: must be logged in to see this page ----
 api.me().then((res) => {
@@ -35,12 +36,24 @@ async function loadTasks() {
   if (sortBy.value) filters.sort = sortBy.value;
 
   const tasks = await api.getTasks(filters);
-  renderTasks(tasks);
+
+  const searchText = searchInput.value.trim().toLowerCase();
+
+  const filteredTasks = tasks.filter((task) => {
+    return (
+      task.title.toLowerCase().includes(searchText) ||
+      (task.description || "").toLowerCase().includes(searchText)
+    );
+  });
+
+  renderTasks(filteredTasks);
 }
 
 [filterStatus, filterPriority, sortBy].forEach((el) =>
   el.addEventListener("change", loadTasks)
 );
+
+searchInput.addEventListener("input", loadTasks);
 
 function isOverdue(dueDate, completed) {
   if (!dueDate || completed) return false;
