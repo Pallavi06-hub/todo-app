@@ -308,7 +308,7 @@ def update_task(task_id):
     try:
         with conn.cursor() as cur:
             cur.execute(
-                "SELECT * FROM tasks WHERE id=%s AND user_id=%s",
+                "SELECT * FROM tasks WHERE  id=%s AND user_id=%s",
                 (task_id, session["user_id"]),
             )
             existing = cur.fetchone()
@@ -382,9 +382,11 @@ def toggle_complete(task_id):
                 new_value = not existing["completed"]  # no value given -> just flip it
 
             cur.execute(
-                "UPDATE tasks SET completed=%s WHERE id=%s AND user_id=%s",
-                (bool(new_value), task_id, session["user_id"]),
-            )
+    """UPDATE tasks
+       SET completed=%s, updated_at=NOW()
+       WHERE id=%s AND user_id=%s""",
+    (bool(new_value), task_id, session["user_id"]),
+)
             conn.commit()
 
             cur.execute("SELECT * FROM tasks WHERE id=%s", (task_id,))
