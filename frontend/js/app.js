@@ -53,7 +53,7 @@ async function loadTasks() {
       (task.description || "").toLowerCase().includes(searchText)
     );
   });
-
+  updateSmartFocus(tasks);
   renderTasks(filteredTasks);
 }
 
@@ -63,11 +63,89 @@ async function loadTasks() {
 
 searchInput.addEventListener("input", loadTasks);
 
+function getCategoryIcon(category) {
+  const icons = {
+    Study: "📚",
+    Work: "💼",
+    Personal: "🏠",
+    Shopping: "🛒",
+    Other: "🎯"
+  };
+
+  return icons[category] || "🎯";
+}
+
 function isOverdue(dueDate, completed) {
   if (!dueDate || completed) return false;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   return new Date(dueDate) < today;
+}
+
+// ---- Today's Smart Focus ----
+function updateSmartFocus(tasks) {
+  const smartTitle = document.getElementById("smart-task-title");
+  const smartPriority = document.getElementById("smart-task-priority");
+  const smartCategory = document.getElementById("smart-task-category");
+  const smartDue = document.getElementById("smart-task-due");
+  const focusBtn = document.getElementById("focus-btn");
+
+  const pendingTasks = tasks.filter(task => !task.completed);
+
+  if (pendingTasks.length === 0) {
+    smartTitle.textContent = "No pending tasks 🎉";
+    smartPriority.textContent = "";
+    smartCategory.textContent = "";
+    smartDue.textContent = "";
+    focusBtn.style.display = "none";
+    return;
+  }
+
+  const priorityScore = {
+    high: 3,
+    medium: 2,
+    low: 1
+  };
+
+  pendingTasks.sort((a, b) => {
+    const priorityDifference =
+      priorityScore[b.priority] - priorityScore[a.priority];
+
+    if (priorityDifference !== 0) {
+      return priorityDifference;
+    }
+
+    if (!a.due_date) return 1;
+    if (!b.due_date) return -1;
+
+    return new Date(a.due_date) - new Date(b.due_date);
+  });
+
+  const bestTask = pendingTasks[0];
+
+  smartTitle.textContent = bestTask.title;
+
+  smartPriority.textContent =
+    "🔥 " +
+    bestTask.priority.charAt(0).toUpperCase() +
+    bestTask.priority.slice(1);
+
+  smartCategory.textContent =
+    getCategoryIcon(bestTask.category) +
+    " " +
+    (bestTask.category || "Other");
+
+  if (bestTask.due_date) {
+    smartDue.textContent = "📅 Due: " + bestTask.due_date;
+  } else {
+    smartDue.textContent = "📅 No due date";
+  }
+
+  focusBtn.style.display = "inline-block";
+
+  focusBtn.onclick = () => {
+    openEditModal(bestTask);
+  };
 }
 
 function renderTasks(tasks) {
@@ -92,6 +170,7 @@ function renderTasks(tasks) {
         ${task.description ? `<p class="task-desc"></p>` : ""}
         <div class="task-meta">
           <span class="badge ${task.priority}"></span>
+          <span class="category-badge">${task.category || "Other"}</span>
           ${task.due_date ? `<span class="due-date ${overdue ? "overdue" : ""}"></span>` : ""}
         </div>
       </div>
@@ -138,10 +217,17 @@ taskForm.addEventListener("submit", async (e) => {
   const title = document.getElementById("title").value.trim();
   const description = document.getElementById("description").value.trim();
   const priority = document.getElementById("priority").value;
+  const category = document.getElementById("category").value;
   const due_date = document.getElementById("due_date").value || null;
 
   try {
-    await api.createTask({ title, description, priority, due_date });
+    await api.createTask({
+  title,
+  description,
+  priority,
+  category,
+  due_date
+});
     taskForm.reset();
     document.getElementById("priority").value = "medium";
     loadTasks();
@@ -161,6 +247,7 @@ function openEditModal(task) {
   document.getElementById("edit-title").value = task.title;
   document.getElementById("edit-description").value = task.description || "";
   document.getElementById("edit-priority").value = task.priority;
+  document.getElementById("edit-category").value = task.category || "Other";
   document.getElementById("edit-due_date").value = task.due_date || "";
   editError.style.display = "none";
   modalOverlay.classList.add("open");
@@ -183,6 +270,7 @@ editForm.addEventListener("submit", async (e) => {
     title: document.getElementById("edit-title").value.trim(),
     description: document.getElementById("edit-description").value.trim(),
     priority: document.getElementById("edit-priority").value,
+     category: document.getElementById("edit-category").value,
     due_date: document.getElementById("edit-due_date").value || null,
   };
 

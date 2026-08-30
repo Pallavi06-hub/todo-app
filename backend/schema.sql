@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     title VARCHAR(200) NOT NULL,
     description TEXT,
     priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
+    category VARCHAR(30) NOT NULL DEFAULT 'Other',
     due_date DATE DEFAULT NULL,
     completed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

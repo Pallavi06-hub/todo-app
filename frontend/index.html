@@ -32,20 +32,30 @@
         <label for="description">Description (optional)</label>
         <textarea id="description" rows="2" placeholder="Any details..."></textarea>
 
-        <div class="form-row">
-          <div>
-            <label for="priority">Priority</label>
-            <select id="priority">
-              <option value="low">Low</option>
-              <option value="medium" selected>Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-          <div>
-            <label for="due_date">Due date (optional)</label>
-            <input type="date" id="due_date">
-          </div>
-        </div>
+<div class="form-row">
+  <div>
+    <label for="priority">Priority</label>
+    <select id="priority">
+      <option value="low">Low</option>
+      <option value="medium" selected>Medium</option>
+      <option value="high">High</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="category">Category</label>
+    <select id="category">
+      <option value="Study">📚 Study</option>
+      <option value="Work">💼 Work</option>
+      <option value="Personal">🏠 Personal</option>
+      <option value="Shopping">🛒 Shopping</option>
+      <option value="Other" selected>🎯 Other</option>
+    </select>
+  </div>
+</div>
+
+<label for="due_date">Due date (optional)</label>
+<input type="date" id="due_date">
 
         <button type="submit" class="btn-primary">Add Task</button>
         <div class="error-box" id="form-error"></div>
@@ -71,6 +81,32 @@
   <h3>Pending</h3>
   <p id="pending-count">0</p>
   <span>Tasks remaining</span>
+</div>
+
+<!-- Today's Smart Focus -->
+<div class="smart-focus-card" id="smart-focus-card">
+  <div class="smart-focus-icon">🎯</div>
+
+  <div class="smart-focus-content">
+    <h2>Today's Smart Focus</h2>
+    <p class="smart-focus-subtitle">
+      Your most important pending task
+    </p>
+
+    <div id="smart-task-content">
+      <h3 id="smart-task-title">No pending tasks 🎉</h3>
+
+      <div class="smart-task-details">
+        <span id="smart-task-priority"></span>
+        <span id="smart-task-category"></span>
+        <span id="smart-task-due"></span>
+      </div>
+    </div>
+
+    <button id="focus-btn" class="focus-btn" style="display:none;">
+      Start This Task →
+    </button>
+  </div>
 </div>
 
     <!-- Search -->
@@ -120,19 +156,29 @@
         <textarea id="edit-description" rows="2"></textarea>
 
         <div class="form-row">
-          <div>
-            <label for="edit-priority">Priority</label>
-            <select id="edit-priority">
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
-          <div>
-            <label for="edit-due_date">Due date</label>
-            <input type="date" id="edit-due_date">
-          </div>
-        </div>
+  <div>
+    <label for="edit-priority">Priority</label>
+    <select id="edit-priority">
+      <option value="low">Low</option>
+      <option value="medium">Medium</option>
+      <option value="high">High</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="edit-category">Category</label>
+    <select id="edit-category">
+      <option value="Study">📚 Study</option>
+      <option value="Work">💼 Work</option>
+      <option value="Personal">🏠 Personal</option>
+      <option value="Shopping">🛒 Shopping</option>
+      <option value="Other" selected>🎯 Other</option>
+    </select>
+  </div>
+</div>
+
+<label for="edit-due_date">Due date</label>
+<input type="date" id="edit-due_date">
 
         <div class="modal-actions">
           <button type="button" class="btn-cancel" id="cancel-edit">Cancel</button>

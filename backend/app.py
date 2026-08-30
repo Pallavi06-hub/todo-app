@@ -53,6 +53,7 @@ CORS(
 
 EMAIL_RE = re.compile(r"^[a-zA-Z0-9._%+-]+@gmail\.com$")
 VALID_PRIORITIES = {"low", "medium", "high"}
+VALID_CATEGORIES = {"Study", "Work", "Personal", "Shopping", "Other"}
 
 
 # ------------------------------------------------------------------
@@ -88,6 +89,7 @@ def task_to_dict(row):
         "title": row["title"],
         "description": row["description"],
         "priority": row["priority"],
+        "category": row["category"],
         "due_date": due,
         "completed": bool(row["completed"]),
         "created_at": created.isoformat() if created else None,
@@ -263,12 +265,15 @@ def create_task():
     title = (data.get("title") or "").strip()
     description = (data.get("description") or "").strip()
     priority = data.get("priority", "medium")
+    category = data.get("category", "Other")
     due_date_raw = data.get("due_date")
 
     if not title:
         return jsonify({"error": "Title is required"}), 400
     if priority not in VALID_PRIORITIES:
         return jsonify({"error": "Priority must be low, medium, or high"}), 400
+    if category not in VALID_CATEGORIES:
+        return jsonify({"error": "Invalid category"}), 400
     try:
         due_date = parse_due_date(due_date_raw)
     except ValueError:
@@ -278,9 +283,10 @@ def create_task():
     try:
         with conn.cursor() as cur:
             cur.execute(
-                """INSERT INTO tasks (user_id, title, description, priority, due_date)
-                   VALUES (%s, %s, %s, %s, %s)""",
-                (session["user_id"], title, description, priority, due_date),
+                """INSERT INTO tasks
+   (user_id, title, description, priority, category, due_date)
+   VALUES (%s, %s, %s, %s, %s, %s)""",
+(session["user_id"], title, description, priority, category, due_date),
             )
             conn.commit()
             task_id = cur.lastrowid
@@ -312,6 +318,7 @@ def update_task(task_id):
             title = (data.get("title", existing["title"]) or "").strip()
             description = data.get("description", existing["description"])
             priority = data.get("priority", existing["priority"])
+            category= data.get("category", existing["category"])
             due_date_raw = data.get("due_date", existing["due_date"])
             completed = data.get("completed", existing["completed"])
 
@@ -319,6 +326,8 @@ def update_task(task_id):
                 return jsonify({"error": "Title cannot be empty"}), 400
             if priority not in VALID_PRIORITIES:
                 return jsonify({"error": "Priority must be low, medium, or high"}), 400
+            if category not in VALID_CATEGORIES:
+                return jsonify({"error": "Invalid category"}), 400
             try:
                 due_date = parse_due_date(
                     due_date_raw.isoformat() if isinstance(due_date_raw, date) else due_date_raw
@@ -328,9 +337,19 @@ def update_task(task_id):
 
             cur.execute(
                 """UPDATE tasks
-                   SET title=%s, description=%s, priority=%s, due_date=%s, completed=%s
-                   WHERE id=%s AND user_id=%s""",
-                (title, description, priority, due_date, bool(completed), task_id, session["user_id"]),
+   SET title=%s, description=%s, priority=%s,
+       category=%s, due_date=%s, completed=%s
+   WHERE id=%s AND user_id=%s""",
+(
+    title,
+    description,
+    priority,
+    category,
+    due_date,
+    bool(completed),
+    task_id,
+    session["user_id"],
+),
             )
             conn.commit()
 
