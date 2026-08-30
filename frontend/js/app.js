@@ -308,6 +308,15 @@ function updateProductivityStreak(tasks) {
     return;
   }
 
+  // Convert a Date object to LOCAL YYYY-MM-DD
+  function getLocalDateString(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+
   // Get dates on which at least one task was completed
   const completedDates = new Set();
 
@@ -315,20 +324,23 @@ function updateProductivityStreak(tasks) {
 
     if (task.completed) {
 
-      const date =
-        new Date(task.updated_at || task.created_at)
-          .toISOString()
-          .split("T")[0];
+      const completionDate =
+        new Date(task.updated_at || task.created_at);
 
-      completedDates.add(date);
+      const dateString =
+        getLocalDateString(completionDate);
+
+      completedDates.add(dateString);
     }
 
   });
 
-  // Today's date
+  // Today's LOCAL date
   const today = new Date();
 
   today.setHours(0, 0, 0, 0);
+
+  const todayString = getLocalDateString(today);
 
   // Calculate current streak
   let currentStreak = 0;
@@ -340,7 +352,7 @@ function updateProductivityStreak(tasks) {
     date.setDate(today.getDate() - i);
 
     const dateString =
-      date.toISOString().split("T")[0];
+      getLocalDateString(date);
 
     if (completedDates.has(dateString)) {
 
@@ -388,14 +400,19 @@ function updateProductivityStreak(tasks) {
 
   sortedDates.forEach(dateString => {
 
+    const [year, month, day] =
+      dateString.split("-").map(Number);
+
     const currentDate =
-      new Date(dateString);
+      new Date(year, month - 1, day);
 
     if (previousDate) {
 
       const difference =
-        (currentDate - previousDate) /
-        (1000 * 60 * 60 * 24);
+        Math.round(
+          (currentDate - previousDate) /
+          (1000 * 60 * 60 * 24)
+        );
 
       if (difference === 1) {
 
@@ -420,12 +437,13 @@ function updateProductivityStreak(tasks) {
   });
 
   bestStreakElement.textContent =
-    `${bestStreak} Days`;
+    `${bestStreak} ${bestStreak === 1 ? "Day" : "Days"}`;
 
   // Create weekly display
   weekDaysElement.innerHTML = "";
 
-  const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const dayNames =
+    ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
   for (let i = 6; i >= 0; i--) {
 
@@ -434,7 +452,7 @@ function updateProductivityStreak(tasks) {
     date.setDate(today.getDate() - i);
 
     const dateString =
-      date.toISOString().split("T")[0];
+      getLocalDateString(date);
 
     const completed =
       completedDates.has(dateString);
@@ -443,7 +461,9 @@ function updateProductivityStreak(tasks) {
       document.createElement("div");
 
     dayBox.className =
-      completed ? "week-day completed" : "week-day";
+      completed
+        ? "week-day completed"
+        : "week-day";
 
     dayBox.innerHTML = `
       <span>${dayNames[date.getDay()]}</span>
