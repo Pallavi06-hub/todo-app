@@ -57,6 +57,8 @@ async function loadTasks() {
   });
   updateSmartFocus(tasks);
   renderTasks(filteredTasks);
+  updateWeeklyReport(tasks);
+  updateAchievements(tasks);
 }
 
 [filterStatus, filterPriority, sortBy].forEach((el) =>
@@ -472,4 +474,392 @@ function updateProductivityStreak(tasks) {
 
     weekDaysElement.appendChild(dayBox);
   }
+}
+
+/* =========================================
+   WEEKLY PRODUCTIVITY REPORT
+   ========================================= */
+
+function updateWeeklyReport(tasks) {
+
+  const completedEl =
+    document.getElementById("week-completed");
+
+  const totalEl =
+    document.getElementById("week-total");
+
+  const rateEl =
+    document.getElementById("week-rate");
+
+  const chartEl =
+    document.getElementById("weekly-chart");
+
+  const productiveEl =
+    document.getElementById("most-productive");
+
+  if (!completedEl || !totalEl || !rateEl || !chartEl) {
+    return;
+  }
+
+  const today = new Date();
+
+  today.setHours(0, 0, 0, 0);
+
+  // Find Monday of the current week
+  const monday = new Date(today);
+
+  const day = monday.getDay();
+
+  const difference = day === 0 ? 6 : day - 1;
+
+  monday.setDate(monday.getDate() - difference);
+
+  const days = [];
+
+  for (let i = 0; i < 7; i++) {
+
+    const date = new Date(monday);
+
+    date.setDate(monday.getDate() + i);
+
+    days.push(date);
+  }
+
+  const dayNames = [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ];
+
+  // Count completed tasks for each day
+  const dailyCompleted = [0, 0, 0, 0, 0, 0, 0];
+
+  tasks.forEach(task => {
+
+    if (!task.completed) {
+      return;
+    }
+
+    const completionDate =
+      new Date(task.updated_at || task.created_at);
+
+    completionDate.setHours(0, 0, 0, 0);
+
+    days.forEach((date, index) => {
+
+      if (
+        completionDate.getTime() ===
+        date.getTime()
+      ) {
+        dailyCompleted[index]++;
+      }
+
+    });
+
+  });
+
+  // Total completed this week
+  const weekCompleted =
+    dailyCompleted.reduce(
+      (total, value) => total + value,
+      0
+    );
+
+  // Total tasks created this week
+  let weekTotal = 0;
+
+  tasks.forEach(task => {
+
+    const createdDate =
+      new Date(task.created_at);
+
+    createdDate.setHours(0, 0, 0, 0);
+
+    if (
+      createdDate >= monday &&
+      createdDate <= today
+    ) {
+      weekTotal++;
+    }
+
+  });
+
+  // Calculate completion rate
+  const completionRate =
+    weekTotal > 0
+      ? Math.round((weekCompleted / weekTotal) * 100)
+      : 0;
+
+  completedEl.textContent = weekCompleted;
+  totalEl.textContent = weekTotal;
+  rateEl.textContent = completionRate + "%";
+
+  // Find highest completed day
+  const highest =
+    Math.max(...dailyCompleted);
+
+  if (highest > 0) {
+
+    const index =
+      dailyCompleted.indexOf(highest);
+
+    productiveEl.textContent =
+      `🌟 Most productive day: ${dayNames[index]} (${highest} task${highest > 1 ? "s" : ""})`;
+
+  } else {
+
+    productiveEl.textContent =
+      "🌟 Most productive day: No completed tasks yet";
+
+  }
+
+  // Create chart
+  chartEl.innerHTML = "";
+
+  const maxValue =
+    Math.max(...dailyCompleted, 1);
+
+  dailyCompleted.forEach((count, index) => {
+
+    const barWrapper =
+      document.createElement("div");
+
+    barWrapper.className =
+      "chart-column";
+
+    const bar =
+      document.createElement("div");
+
+    bar.className =
+      "chart-bar";
+
+    const height =
+      count === 0
+        ? 8
+        : Math.max((count / maxValue) * 100, 15);
+
+    bar.style.height =
+      height + "%";
+
+    const number =
+      document.createElement("span");
+
+    number.className =
+      "chart-number";
+
+    number.textContent =
+      count;
+
+    const day =
+      document.createElement("small");
+
+    day.textContent =
+      dayNames[index];
+
+    bar.appendChild(number);
+
+    barWrapper.appendChild(bar);
+
+    barWrapper.appendChild(day);
+
+    chartEl.appendChild(barWrapper);
+  });
+}
+
+/* =========================================
+   ACHIEVEMENTS & BADGES
+   ========================================= */
+
+function updateAchievements(tasks) {
+
+  const achievementsGrid =
+    document.getElementById("achievements-grid");
+
+  if (!achievementsGrid) {
+    return;
+  }
+
+  const completedTasks =
+    tasks.filter(task => task.completed).length;
+
+  const totalTasks = tasks.length;
+
+  // Calculate current streak
+  const completedDates = new Set();
+
+  tasks.forEach(task => {
+
+    if (task.completed) {
+
+      const date =
+        new Date(task.updated_at || task.created_at)
+          .toISOString()
+          .split("T")[0];
+
+      completedDates.add(date);
+    }
+
+  });
+
+  const today = new Date();
+
+  today.setHours(0, 0, 0, 0);
+
+  let currentStreak = 0;
+
+  for (let i = 0; i < 365; i++) {
+
+    const date = new Date(today);
+
+    date.setDate(today.getDate() - i);
+
+    const dateString =
+      date.toISOString().split("T")[0];
+
+    if (completedDates.has(dateString)) {
+
+      currentStreak++;
+
+    } else {
+
+      break;
+
+    }
+  }
+
+  const achievements = [
+
+    {
+      icon: "🌱",
+      title: "First Task",
+      description: "Complete your first task",
+      unlocked: completedTasks >= 1
+    },
+
+    {
+      icon: "🎯",
+      title: "10 Tasks",
+      description: "Complete 10 tasks",
+      unlocked: completedTasks >= 10
+    },
+
+    {
+      icon: "🔥",
+      title: "3-Day Streak",
+      description: "Maintain a 3-day streak",
+      unlocked: currentStreak >= 3
+    },
+
+    {
+      icon: "🏆",
+      title: "25 Tasks",
+      description: "Complete 25 tasks",
+      unlocked: completedTasks >= 25
+    },
+
+    {
+      icon: "⭐",
+      title: "50 Tasks",
+      description: "Complete 50 tasks",
+      unlocked: completedTasks >= 50
+    },
+
+    {
+      icon: "🚀",
+      title: "Productivity Pro",
+      description: "Complete 100 tasks",
+      unlocked: completedTasks >= 100
+    }
+
+  ];
+
+  achievementsGrid.innerHTML = "";
+
+  const previousAchievements =
+  JSON.parse(
+    localStorage.getItem("unlockedAchievements") || "[]"
+  );
+
+  achievements.forEach(achievement => {
+
+    const badge =
+      document.createElement("div");
+
+    badge.className =
+      "achievement-badge" +
+      (achievement.unlocked ? " unlocked" : " locked");
+
+    badge.innerHTML = `
+      <div class="badge-icon">
+        ${achievement.icon}
+      </div>
+
+      <div class="badge-info">
+        <h3>${achievement.title}</h3>
+        <p>${achievement.description}</p>
+
+        <span class="badge-status">
+          ${achievement.unlocked
+            ? "✓ Earned"
+            : "🔒 Locked"}
+        </span>
+      </div>
+    `;
+
+    achievementsGrid.appendChild(badge);
+
+    if (
+  achievement.unlocked &&
+  !previousAchievements.includes(achievement.title)
+) {
+  showAchievementCongratulations(achievement.title);
+}
+
+  });
+  localStorage.setItem(
+  "unlockedAchievements",
+  JSON.stringify(
+    achievements
+      .filter(achievement => achievement.unlocked)
+      .map(achievement => achievement.title)
+  )
+);
+}
+
+/* =========================================
+   ACHIEVEMENT CONGRATULATIONS
+   ========================================= */
+
+function showAchievementCongratulations(title) {
+
+  const message = document.createElement("div");
+
+  message.className = "achievement-popup";
+
+  message.innerHTML = `
+    <div class="popup-icon">🎉</div>
+    <div>
+      <strong>Achievement Unlocked!</strong>
+      <span>${title}</span>
+    </div>
+  `;
+
+  document.body.appendChild(message);
+
+  setTimeout(() => {
+    message.classList.add("show");
+  }, 50);
+
+  setTimeout(() => {
+    message.classList.remove("show");
+
+    setTimeout(() => {
+      message.remove();
+    }, 400);
+
+  }, 3000);
 }
