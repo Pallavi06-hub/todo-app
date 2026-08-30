@@ -21,7 +21,10 @@
 
     <!-- Add task -->
     <div class="new-task-card">
-      <h2>Add a new task</h2>
+      <h2 class="add-task-heading">
+  <span class="add-task-icon">➕</span>
+  Add a new task
+</h2>
       <form id="task-form">
         <label for="title">Title</label>
         <input type="text" id="title" required placeholder="e.g. Finish project report">
@@ -48,24 +51,28 @@
         <div class="error-box" id="form-error"></div>
       </form>
     </div>
-    <!-- Task Statistics -->
-      <div class="task-stats">
-        <div class="stat-box">
-         <h3>Total</h3>
-          <p id="total-count">0</p>
-      </div>
 
-      <div class="stat-box">
-        <h3>Completed</h3>
-         <p id="completed-count">0</p>
-      </div>
+    <div class="stat-box">
+  <div class="stat-icon">📋</div>
+  <h3>Total Tasks</h3>
+  <p id="total-count">0</p>
+  <span>All your tasks</span>
+</div>
 
-      <div class="stat-box">
-        <h3>Pending</h3>
-          <p id="pending-count">0</p>
-      </div>
-      </div>
-      
+<div class="stat-box">
+  <div class="stat-icon">✅</div>
+  <h3>Completed</h3>
+  <p id="completed-count">0</p>
+  <span>Tasks finished</span>
+</div>
+
+<div class="stat-box">
+  <div class="stat-icon">⏳</div>
+  <h3>Pending</h3>
+  <p id="pending-count">0</p>
+  <span>Tasks remaining</span>
+</div>
+
     <!-- Search -->
     <div class="search-container">
       <input
