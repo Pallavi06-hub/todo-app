@@ -479,7 +479,6 @@ function updateProductivityStreak(tasks) {
 /* =========================================
    WEEKLY PRODUCTIVITY REPORT
    ========================================= */
-
 function updateWeeklyReport(tasks) {
 
   const completedEl =
@@ -501,27 +500,31 @@ function updateWeeklyReport(tasks) {
     return;
   }
 
-  const today = new Date();
+  function getLocalDateString(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
 
+    return `${year}-${month}-${day}`;
+  }
+
+  const today = new Date();
   today.setHours(0, 0, 0, 0);
 
   // Find Monday of the current week
   const monday = new Date(today);
-
   const day = monday.getDay();
-
   const difference = day === 0 ? 6 : day - 1;
 
   monday.setDate(monday.getDate() - difference);
+  monday.setHours(0, 0, 0, 0);
 
   const days = [];
 
   for (let i = 0; i < 7; i++) {
-
     const date = new Date(monday);
-
     date.setDate(monday.getDate() + i);
-
+    date.setHours(0, 0, 0, 0);
     days.push(date);
   }
 
@@ -535,7 +538,7 @@ function updateWeeklyReport(tasks) {
     "Sun"
   ];
 
-  // Count completed tasks for each day
+  // Count completed tasks by completion date
   const dailyCompleted = [0, 0, 0, 0, 0, 0, 0];
 
   tasks.forEach(task => {
@@ -547,13 +550,14 @@ function updateWeeklyReport(tasks) {
     const completionDate =
       new Date(task.updated_at || task.created_at);
 
-    completionDate.setHours(0, 0, 0, 0);
+    const completionDateString =
+      getLocalDateString(completionDate);
 
     days.forEach((date, index) => {
 
       if (
-        completionDate.getTime() ===
-        date.getTime()
+        completionDateString ===
+        getLocalDateString(date)
       ) {
         dailyCompleted[index]++;
       }
@@ -569,7 +573,8 @@ function updateWeeklyReport(tasks) {
       0
     );
 
-  // Total tasks created this week
+  // Count all tasks that were either:
+  // created this week OR completed this week
   let weekTotal = 0;
 
   tasks.forEach(task => {
@@ -577,12 +582,25 @@ function updateWeeklyReport(tasks) {
     const createdDate =
       new Date(task.created_at);
 
-    createdDate.setHours(0, 0, 0, 0);
+    const createdDateString =
+      getLocalDateString(createdDate);
 
-    if (
+    const completionDate =
+      new Date(task.updated_at || task.created_at);
+
+    const completionDateString =
+      getLocalDateString(completionDate);
+
+    const createdThisWeek =
       createdDate >= monday &&
-      createdDate <= today
-    ) {
+      createdDate <= today;
+
+    const completedThisWeek =
+      task.completed &&
+      completionDate >= monday &&
+      completionDate <= today;
+
+    if (createdThisWeek || completedThisWeek) {
       weekTotal++;
     }
 
@@ -663,7 +681,6 @@ function updateWeeklyReport(tasks) {
     bar.appendChild(number);
 
     barWrapper.appendChild(bar);
-
     barWrapper.appendChild(day);
 
     chartEl.appendChild(barWrapper);
