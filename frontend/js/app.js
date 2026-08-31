@@ -592,13 +592,13 @@ function updateWeeklyReport(tasks) {
       getLocalDateString(completionDate);
 
     const createdThisWeek =
-      createdDate >= monday &&
-      createdDate <= today;
+  createdDateString >= getLocalDateString(monday) &&
+  createdDateString <= getLocalDateString(today);
 
-    const completedThisWeek =
-      task.completed &&
-      completionDate >= monday &&
-      completionDate <= today;
+const completedThisWeek =
+  task.completed &&
+  completionDateString >= getLocalDateString(monday) &&
+  completionDateString <= getLocalDateString(today);
 
     if (createdThisWeek || completedThisWeek) {
       weekTotal++;
